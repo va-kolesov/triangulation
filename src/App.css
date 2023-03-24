@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
     margin: 0;
 }
 .App {
@@ -76,7 +77,7 @@ text {
     z-index: 100;
     user-select: none;
 }
- 
+
 polygon {
     fill: transparent;
     stroke: var(--color-shape-outline);
@@ -97,6 +98,9 @@ polygon {
 }
 .showAdjacent g:hover > .circle {
     visibility: visible;
+}
+.showCache {
+    z-index: 10;
 }
 .showCache polygon.alt {
     fill: var(--color-fill_alt);

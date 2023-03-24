@@ -1,7 +1,7 @@
 "strict mode";
 const WIDTH = 1000;
 const HEIGHT = 1000;
-const PADDING = 10;
+const PADDING = 1;
 
 let POINTS;
 let TRIANGLES;
@@ -93,7 +93,7 @@ export function buildTriangulation(finish) {
     if (finish) {
         removeHelpingPoints();
     }
-    return TRIANGLES;
+    return [POINTS, TRIANGLES];
 }
 
 /**
@@ -263,8 +263,13 @@ function removeTriangle(triangle, replaceTriangle) {
  * Определение положения точки в триангуляции.
  */
 function locatePoint(point) {
-    const cacheTriangle = getCacheTriangle(point);
-    const locatedTriangle = findNextClosestTriangle(point, cacheTriangle);
+    let startTriangle;
+    if (distance(point, POINTS[lastHandledPointIndex]) > WIDTH/CACHE.length) {
+        startTriangle = getCacheTriangle(point);
+    } else {
+        startTriangle = TRIANGLES[TRIANGLES.length - 1];
+    }
+    const locatedTriangle = findNextClosestTriangle(point, startTriangle);
     return locatedTriangle;
 }
 
@@ -294,7 +299,7 @@ function findNextClosestTriangle(point, triangle) {
         let closestTriangle = null;
         let closestTriangleDist = Infinity;
         triangle.adjacent
-            .filter((tr) => !searchPath.find(ptr => tr === ptr))
+            .filter((tr) => !searchPath.find((ptr) => tr === ptr))
             .forEach((tr) => {
                 const dist = shortestDistanceToTriangle(point, tr);
                 if (dist < closestTriangleDist) {

@@ -26,8 +26,9 @@ const App = () => {
         }
     };
     const triangulate = (finish) => {
-        const newTriangles = buildTriangulation(finish);
+        const [newPoints, newTriangles] = buildTriangulation(finish);
         setTriangles([...newTriangles]);
+        setPoints([...newPoints]);
         if (finish) {
             setState(2);
         }
@@ -61,22 +62,37 @@ const App = () => {
                 onClick={addPoint}
             />
             <div className="toolbar">
-                <button disabled={state === 2} onClick={() => addRandomPoints(10)}>
+                <button
+                    disabled={state === 2}
+                    onClick={() => addRandomPoints(10)}
+                >
                     Добавить 10 случайных точек
                 </button>
-                <button disabled={state === 2} onClick={() => addRandomPoints(100)}>
+                <button
+                    disabled={state === 2}
+                    onClick={() => addRandomPoints(100)}
+                >
                     Добавить 100 случайных точек
                 </button>
-                <button disabled={state === 2} onClick={() => addRandomPoints(1000)}>
+                <button
+                    disabled={state === 2}
+                    onClick={() => addRandomPoints(1000)}
+                >
                     Добавить 1000 случайных точек
                 </button>
                 <button disabled={state !== 1} onClick={nextPoint}>
                     Обработать следующую точку
                 </button>
-                <button disabled={state !== 1} onClick={() => triangulate(false)}>
+                <button
+                    disabled={state !== 1}
+                    onClick={() => triangulate(false)}
+                >
                     Триангуляция
                 </button>
-                <button disabled={state !== 1} onClick={() => triangulate(true)}>
+                <button
+                    disabled={state !== 1}
+                    onClick={() => triangulate(true)}
+                >
                     Триангуляция (окончательная)
                 </button>
                 <button onClick={reset}>Сброс</button>
@@ -85,6 +101,24 @@ const App = () => {
                         ? "Подсвечивать соседние треугольники"
                         : "Подсвечивать кэш"}
                 </button>
+                <div>
+                    <p>
+                        Добавлено точек: {points.length}.{" "}
+                        {state < 2 ? "(Из них 4 вспомогательные)" : ""}
+                    </p>
+                    <p>
+                        Построено треугольников триангуляции: {triangles.length}
+                        . {state < 2 ? "(Включая вспомогательные)" : ""}
+                    </p>
+                    {state < 2 && <p>Клик по диаграме добавляет точку в место клика.</p>}
+                    {state === 2 && <p>Построение триангуляции завершено, вспомогательные точки и треугольники удалены.</p>}
+                    <p>
+                        При наведении мыши{" "}
+                        {showCache
+                            ? "на пунктирный квадрат, подсвечивается связанный с ним треугольник из динамического кэша."
+                            : "на треугольник, подсвечиваются его соседи и описывающая его окружность."}
+                    </p>
+                </div>
             </div>
         </div>
     );
