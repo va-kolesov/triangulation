@@ -1,0 +1,40 @@
+.diagram {
+    border: 1px solid var(--color-border);
+    box-sizing: border-box;
+    border-radius: 10px;
+}
+
+.triangle {
+    fill: transparent;
+    stroke: var(--color-shape-outline);
+    stroke-width: 0.25;
+}
+.alt {
+    pointer-events: none;
+    stroke: none;
+}
+.showAdjacent .alt {
+    visibility: hidden;
+}
+.circle {
+    visibility: hidden;
+    stroke: var(--color-shape-outline);
+    fill: none;
+    stroke-width: 0.5px;
+}
+.showAdjacent g:hover > .normal {
+    fill: var(--color-fill);
+}
+.showAdjacent g:hover > .alt {
+    fill: var(--color-fill_alt);
+    visibility: visible;
+}
+.showAdjacent g:hover > .circle {
+    visibility: visible;
+}
+.showCache {
+    z-index: 10;
+}
+.showCache polygon.alt {
+    fill: var(--color-fill_alt);
+}

@@ -4,6 +4,7 @@ import SvgCanvas from "./SvgCanvas";
 import {
     addPoints,
     addRandomPoints as addRandom,
+    addRandomPointsAlt as addRandomAlt,
     buildTriangulation,
     initialize,
     stepTriangulation,
@@ -33,8 +34,8 @@ const App = () => {
             setState(2);
         }
     };
-    const nextPoint = () => {
-        const newTriangles = stepTriangulation();
+    const nextPoint = (full = true) => {
+        const newTriangles = stepTriangulation(full);
         setTriangles([...newTriangles]);
     };
     const reset = () => {
@@ -46,8 +47,8 @@ const App = () => {
     const switchCacheDisplay = () => {
         setShowCache(!showCache);
     };
-    const addRandomPoints = (count) => {
-        const newPoints = addRandom(count);
+    const addRandomPoints = (count, alt) => {
+        const newPoints = (alt ? addRandomAlt : addRandom)?.(count);
         setPoints([...newPoints]);
         if (newPoints.length >= 7) {
             setState(1);
@@ -55,53 +56,99 @@ const App = () => {
     };
     return (
         <div className="App">
-            <SvgCanvas
-                showCache={showCache}
-                triangles={triangles}
-                points={points}
-                onClick={addPoint}
-            />
-            <div className="toolbar">
-                <button
-                    disabled={state === 2}
-                    onClick={() => addRandomPoints(10)}
-                >
-                    Добавить 10 случайных точек
-                </button>
-                <button
-                    disabled={state === 2}
-                    onClick={() => addRandomPoints(100)}
-                >
-                    Добавить 100 случайных точек
-                </button>
-                <button
-                    disabled={state === 2}
-                    onClick={() => addRandomPoints(1000)}
-                >
-                    Добавить 1000 случайных точек
-                </button>
-                <button disabled={state !== 1} onClick={nextPoint}>
-                    Обработать следующую точку
-                </button>
-                <button
-                    disabled={state !== 1}
-                    onClick={() => triangulate(false)}
-                >
-                    Триангуляция
-                </button>
-                <button
-                    disabled={state !== 1}
-                    onClick={() => triangulate(true)}
-                >
-                    Триангуляция (окончательная)
-                </button>
+            <div className="scroll">
+                <div className="scroll-content">
+                    <SvgCanvas
+                        showCache={showCache}
+                        triangles={triangles}
+                        points={points}
+                        onClick={addPoint}
+                    />
+                </div>
+            </div>
+            <div className="toolbar column">
+                <div className="row">
+                    <div className="column">
+                        <button
+                            disabled={state === 2}
+                            onClick={() => addRandomPoints(10)}
+                        >
+                            Добавить 10 точек
+                        </button>
+                        <button
+                            disabled={state === 2}
+                            onClick={() => addRandomPoints(100)}
+                        >
+                            Добавить 100 точек
+                        </button>
+                        <button
+                            disabled={state === 2}
+                            onClick={() => addRandomPoints(1000)}
+                        >
+                            Добавить 1000 точек
+                        </button>
+                    </div>
+                    <div className="column">
+                        <button
+                            disabled={state === 2}
+                            onClick={() => addRandomPoints(10, 1)}
+                        >
+                            Добавить 10 точек в круге
+                        </button>
+                        <button
+                            disabled={state === 2}
+                            onClick={() => addRandomPoints(100, 1)}
+                        >
+                            Добавить 100 точек в круге
+                        </button>
+                        <button
+                            disabled={state === 2}
+                            onClick={() => addRandomPoints(1000, 1)}
+                        >
+                            Добавить 1000 точек в круге
+                        </button>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="column">
+                        <button disabled={state !== 1} onClick={nextPoint}>
+                            Сделать шаг
+                        </button>
+                    </div>
+                    <div className="column">
+                        <button
+                            disabled={state !== 1}
+                            onClick={() => nextPoint(false)}
+                        >
+                            Пол шага
+                        </button>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="column">
+                        <button
+                            disabled={state !== 1}
+                            onClick={() => triangulate(false)}
+                        >
+                            Триангуляция
+                        </button>
+                    </div>
+                    <div className="column">
+                        <button
+                            disabled={state !== 1}
+                            onClick={() => triangulate(true)}
+                        >
+                            Триангуляция (окончательная)
+                        </button>
+                    </div>
+                </div>
                 <button onClick={reset}>Сброс</button>
                 <button onClick={switchCacheDisplay}>
                     {showCache
                         ? "Подсвечивать соседние треугольники"
                         : "Подсвечивать кэш"}
                 </button>
-                <div>
+                <div className="info scroll">
                     <p>
                         Добавлено точек: {points.length}.{" "}
                         {state < 2 ? "(Из них 4 вспомогательные)" : ""}
@@ -110,13 +157,26 @@ const App = () => {
                         Построено треугольников триангуляции: {triangles.length}
                         . {state < 2 ? "(Включая вспомогательные)" : ""}
                     </p>
-                    {state < 2 && <p>Клик по диаграме добавляет точку в место клика.</p>}
-                    {state === 2 && <p>Построение триангуляции завершено, вспомогательные точки и треугольники удалены.</p>}
+                    {state < 2 && (
+                        <p>Клик по диаграме добавляет точку в место клика.</p>
+                    )}
+                    {state === 2 && (
+                        <p>
+                            Построение триангуляции завершено, вспомогательные
+                            точки и треугольники удалены.
+                        </p>
+                    )}
                     <p>
                         При наведении мыши{" "}
                         {showCache
                             ? "на пунктирный квадрат, подсвечивается связанный с ним треугольник из динамического кэша."
                             : "на треугольник, подсвечиваются его соседи и описывающая его окружность."}
+                    </p>
+                    <p>
+                        Vadim Kolesov, 2023 |{" "}
+                        <a href="https://github.com/va-kolesov/triangulation">
+                            source
+                        </a>
                     </p>
                 </div>
             </div>

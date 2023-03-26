@@ -12,9 +12,9 @@ body {
     --color-dark-grey: #202020;
 
     /* Secondary Colors */
-    --color-light-green: #b6e8a080;
+    --color-light-green: #b6e8a0;
     --color-dark-green: #3c802d;
-    --color-light-yellow: #fee12b80;
+    --color-light-yellow: #fee12b;
     --color-dark-yellow: #eaa221;
 
     /* Button Colors */
@@ -34,23 +34,52 @@ body {
     --color-fill_alt: var(--color-light-yellow);
 }
 
+html,body,#root,.App {
+height: 100%;
+}
+
+.scroll {
+    overflow: scroll;
+}
+.scroll-content {
+    width: 1000px;
+    height: 1000px;
+}
+
 .toolbar {
+    width: 40%;
+    max-width: 40%;
+    min-width: 40%;
+}
+
+.column {
     display: flex;
     flex-direction: column;
     justify-content: stretch;
+    flex-grow: 1;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+}
+
+.info {
+    font-size: 2.5vh;
 }
 
 button {
-    padding: 10px;
+    padding: 1vh;
     border: none;
-    border-radius: 5px;
+    border-radius: 1vh;
     background-color: var(--color-button-background);
     color: var(--color-button-text);
-    font-size: 18px;
+    font-size: 2.5vh;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
-    margin: 2px;
+    margin: .5vh;
 }
+
 button:disabled {
     background-color: var(--color-button-disabled);
     color: var(--color-button-text-disabled);
@@ -63,45 +92,4 @@ button:hover {
 
 button:active {
     background-color: var(--color-button-active);
-}
-.diagram {
-    border: 1px solid var(--color-border);
-}
-
-.SvgCanvas {
-    border: var(--color-border) solid 3px;
-    border-radius: 10px;
-}
-
-text {
-    z-index: 100;
-    user-select: none;
-}
-
-polygon {
-    fill: transparent;
-    stroke: var(--color-shape-outline);
-}
-.circle {
-    visibility: hidden;
-}
-.showAdjacent polygon.alt {
-    pointer-events: none;
-    visibility: hidden;
-}
-.showAdjacent g:hover > polygon:not(.alt) {
-    fill: var(--color-fill);
-}
-.showAdjacent g:hover > polygon.alt {
-    fill: var(--color-fill_alt);
-    visibility: visible;
-}
-.showAdjacent g:hover > .circle {
-    visibility: visible;
-}
-.showCache {
-    z-index: 10;
-}
-.showCache polygon.alt {
-    fill: var(--color-fill_alt);
 }

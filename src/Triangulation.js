@@ -1,6 +1,6 @@
 "strict mode";
-const WIDTH = 1000;
-const HEIGHT = 1000;
+const WIDTH = 1;
+const HEIGHT = 1;
 const PADDING = 1;
 
 let POINTS;
@@ -82,6 +82,22 @@ export function addRandomPoints(count) {
     return addPoints(...points);
 }
 
+export function addRandomPointsAlt(count) {
+    const points = Array.from({ length: count }, () => {
+        let r1 = Math.random();
+        let r2 = Math.random();
+        return {
+            x:
+                (WIDTH / 2) *
+                (1 + Math.pow(r2, 6 / 7) * Math.sin(r1 * 2 * Math.PI)),
+            y:
+                (HEIGHT / 2) *
+                (1 + Math.pow(r2, 6 / 7) * Math.cos(r1 * 2 * Math.PI)),
+        };
+    });
+    return addPoints(...points);
+}
+
 /**
  * Построение триангуляции по данным точкам.
  * Возвращает массив треугольников.
@@ -100,13 +116,22 @@ export function buildTriangulation(finish) {
  * Шаг алгоритма триангуляции относительно новой точки.
  * Возвращает массив треугольников.
  */
-export function stepTriangulation() {
+export function stepTriangulation(full = true) {
+    if (TRIANGLES_TO_CHECK.length) {
+        checkTriangles();
+        lastHandledPointIndex += 1;
+        if (!full) {
+            return TRIANGLES;
+        }
+    }
     const point = POINTS[lastHandledPointIndex + 1];
     if (point) {
         const triangle = locatePoint(point);
         splitTriangle(triangle, point);
-        checkTriangles();
-        lastHandledPointIndex += 1;
+        if (full) {
+            checkTriangles();
+            lastHandledPointIndex += 1;
+        }
     } else {
         alert("Все точки обработаны");
     }
@@ -264,7 +289,7 @@ function removeTriangle(triangle, replaceTriangle) {
  */
 function locatePoint(point) {
     let startTriangle;
-    if (distance(point, POINTS[lastHandledPointIndex]) > WIDTH/CACHE.length) {
+    if (distance(point, POINTS[lastHandledPointIndex]) > WIDTH / CACHE.length) {
         startTriangle = getCacheTriangle(point);
     } else {
         startTriangle = TRIANGLES[TRIANGLES.length - 1];
